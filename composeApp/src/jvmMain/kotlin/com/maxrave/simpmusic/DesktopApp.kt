@@ -36,6 +36,7 @@ import com.maxrave.domain.mediaservice.handler.ToastType
 import com.maxrave.domain.notification.DesktopNotificationManager
 import com.maxrave.data.io.getHomeFolderPath
 import com.maxrave.logger.Logger
+import com.maxrave.simpmusic.access.AccessGate
 import com.maxrave.simpmusic.di.viewModelModule
 import com.maxrave.simpmusic.extension.DesktopWindowChrome
 import com.maxrave.simpmusic.ui.component.CustomTitleBar
@@ -501,13 +502,15 @@ fun runDesktopApp(args: Array<String> = emptyArray()) {
                             .build()
                     imageLoader
                 }
-                App(
-                    showDesktopNotificationPermissionDialog = showNotificationPermissionDialog,
-                    onDismissDesktopNotificationPermissionDialog =
-                        desktopNotificationManager::dismissPermissionDialog,
-                    onOpenDesktopNotificationSettings =
-                        desktopNotificationManager::openNotificationSettings,
-                )
+                AccessGate {
+                    App(
+                        showDesktopNotificationPermissionDialog = showNotificationPermissionDialog,
+                        onDismissDesktopNotificationPermissionDialog =
+                            desktopNotificationManager::dismissPermissionDialog,
+                        onOpenDesktopNotificationSettings =
+                            desktopNotificationManager::openNotificationSettings,
+                    )
+                }
                 ToastHost()
             }
         }
@@ -544,7 +547,7 @@ private object DesktopRestoreSignal {
  * and reinstalls without storing anything. Null when the OS will not say. Blocking (runs a process on
  * Windows and macOS).
  */
-private fun machineId(): String? {
+internal fun machineId(): String? {
     val os = System.getProperty("os.name").orEmpty()
     val raw =
         runCatching {

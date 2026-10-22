@@ -9,7 +9,7 @@ import com.maxrave.logger.Logger
  * Registry structure:
  * ```
  * HKCU\Software\Classes\simpmusic
- *     (Default) = "URL:SimpMusic Protocol"
+ *     (Default) = "URL:DplayMusic Protocol"
  *     URL Protocol = ""
  *     \DefaultIcon
  *         (Default) = "\"<exe_path>\",0"
@@ -37,8 +37,8 @@ object WindowsProtocolRegistrar {
             return
         }
 
-        register(SCHEME, "URL:SimpMusic Protocol", exePath)
-        register(LASTFM_SCHEME, "URL:SimpMusic Last.fm Callback", exePath)
+        register(SCHEME, "URL:DplayMusic Protocol", exePath)
+        register(LASTFM_SCHEME, "URL:DplayMusic Last.fm Callback", exePath)
     }
 
     private fun register(
@@ -105,7 +105,7 @@ object WindowsProtocolRegistrar {
         }
 
         if (appDir != null) {
-            val exeFile = java.io.File(appDir, "SimpMusic.exe")
+            val exeFile = java.io.File(appDir, "DplayMusic.exe")
             if (exeFile.exists()) {
                 return exeFile.absolutePath
             }

@@ -52,7 +52,7 @@ fun SimpMusicChartButton(
 
             // Text
             Text(
-                text = "Introducing SimpMusic Chart",
+                text = "Top Charts",
                 fontSize = 13.sp,
                 color = labelColor,
                 fontWeight = FontWeight.Normal

@@ -17,12 +17,14 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.Font
 import simpmusic.composeapp.generated.resources.Res
+import simpmusic.composeapp.generated.resources.poppins_bold
 import simpmusic.composeapp.generated.resources.poppins_medium
 
 @Composable
 fun fontFamily(): FontFamily =
     FontFamily(
         Font(Res.font.poppins_medium, FontWeight.Normal, FontStyle.Normal),
+        Font(Res.font.poppins_bold, FontWeight.Bold, FontStyle.Normal),
     )
 
 /**

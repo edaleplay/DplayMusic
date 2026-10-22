@@ -128,9 +128,9 @@ tasks.named<hydraulic.conveyor.gradle.WriteConveyorConfigTask>("writeConveyorCon
     doLast {
         destination.get().asFile.appendText(
             """
-            |app.fsname = simpmusic
-            |app.display-name = SimpMusic
-            |app.rdns-name = com.maxrave.simpmusic
+            |app.fsname = dplaymusic
+            |app.display-name = DplayMusic
+            |app.rdns-name = com.niucode.dplaymusic
             |
             |// Override the Gradle-detected classpath with the ProGuard'd
             |// jar directory. Conveyor expands a directory entry to every
@@ -167,7 +167,7 @@ compose.desktop {
             }
             targetFormats(*listTarget.toTypedArray())
             modules("jdk.unsupported")
-            packageName = "SimpMusic"
+            packageName = "DplayMusic"
             macOS {
                 val formatedDate =
                     Instant.now().let {
@@ -335,7 +335,7 @@ tasks.register("packageConveyorAppImage") {
     )
 
     doLast {
-        val appName = "SimpMusic"
+        val appName = "DplayMusic"
         val conveyorOutput = rootDir.resolve("output")
         if (!conveyorOutput.exists()) {
             throw GradleException(
@@ -380,7 +380,7 @@ tasks.register("packageConveyorAppImage") {
 
         // Ensure top-level PNG icon expected by appimagetool exists.
         val iconSrc = rootDir.resolve("composeApp/icon/circle_app_icon.png")
-        val iconDst = appDir.resolve("simpmusic.png")
+        val iconDst = appDir.resolve("dplaymusic.png")
         if (!iconDst.exists() && iconSrc.exists()) {
             FileUtils.copyFile(iconSrc, iconDst)
         }
@@ -388,7 +388,7 @@ tasks.register("packageConveyorAppImage") {
         val versionName =
             libs.versions.version.name
                 .get()
-        val desktopFile = appDir.resolve("simpmusic.desktop")
+        val desktopFile = appDir.resolve("dplaymusic.desktop")
         // This file, not Conveyor's, is what actually reaches the user: AppRun installs it into
         // ~/.local/share/applications and runs update-desktop-database. So every scheme listed in
         // `app.url-schemes` in conveyor.conf has to be repeated here as an x-scheme-handler MIME
@@ -399,13 +399,13 @@ tasks.register("packageConveyorAppImage") {
             """[Desktop Entry]
             |Type=Application
             |Version=1.0
-            |Name=SimpMusic
-            |Comment=SimpMusic v$versionName - FOSS YouTube Music Client
-            |Exec=bin/simpmusic %u
-            |Icon=simpmusic
+            |Name=DplayMusic
+            |Comment=DplayMusic v$versionName - By NiuCode
+            |Exec=bin/dplaymusic %u
+            |Icon=dplaymusic
             |Terminal=false
             |Categories=Audio;AudioVideo;
-            |StartupWMClass=SimpMusic
+            |StartupWMClass=DplayMusic
             |MimeType=x-scheme-handler/simpmusic;x-scheme-handler/wordbyword;
             |
             """.trimMargin(),
@@ -420,9 +420,9 @@ tasks.register("packageConveyorAppImage") {
             |
             |# Install icon into XDG dirs so GNOME/KDE pick it up the first time.
             |ICON_DIR="${'$'}HOME/.local/share/icons/hicolor/256x256/apps"
-            |if [ ! -f "${'$'}ICON_DIR/simpmusic.png" ] || [ "${'$'}HERE/simpmusic.png" -nt "${'$'}ICON_DIR/simpmusic.png" ]; then
+            |if [ ! -f "${'$'}ICON_DIR/dplaymusic.png" ] || [ "${'$'}HERE/dplaymusic.png" -nt "${'$'}ICON_DIR/dplaymusic.png" ]; then
             |    mkdir -p "${'$'}ICON_DIR"
-            |    cp "${'$'}HERE/simpmusic.png" "${'$'}ICON_DIR/simpmusic.png"
+            |    cp "${'$'}HERE/dplaymusic.png" "${'$'}ICON_DIR/dplaymusic.png"
             |    gtk-update-icon-cache -f -t "${'$'}HOME/.local/share/icons/hicolor" 2>/dev/null || true
             |fi
             |
@@ -430,7 +430,7 @@ tasks.register("packageConveyorAppImage") {
             |DESKTOP_DIR="${'$'}HOME/.local/share/applications"
             |mkdir -p "${'$'}DESKTOP_DIR"
             |APPIMAGE_PATH="${'$'}{APPIMAGE:-${'$'}SELF}"
-            |sed "s|Exec=bin/simpmusic|Exec=${'$'}APPIMAGE_PATH|" "${'$'}HERE/simpmusic.desktop" > "${'$'}DESKTOP_DIR/com-maxrave-simpmusic-MainKt.desktop"
+            |sed "s|Exec=bin/dplaymusic|Exec=${'$'}APPIMAGE_PATH|" "${'$'}HERE/dplaymusic.desktop" > "${'$'}DESKTOP_DIR/com-niucode-dplaymusic.desktop"
             |update-desktop-database "${'$'}DESKTOP_DIR" 2>/dev/null || true
             |
             |# Cap glibc's per-thread malloc arenas.
@@ -447,14 +447,14 @@ tasks.register("packageConveyorAppImage") {
             |export MALLOC_ARENA_MAX=2
             |
             |cd "${'$'}HERE"
-            |exec bin/simpmusic "${'$'}@"
+            |exec bin/dplaymusic "${'$'}@"
             |
             """.trimMargin(),
         )
         appRun.setExecutable(true, false)
 
         // Conveyor's launcher lives at output/bin/simpmusic (lowercase).
-        val appExecutable = appDir.resolve("bin/simpmusic")
+        val appExecutable = appDir.resolve("bin/dplaymusic")
         if (appExecutable.exists() && !appExecutable.canExecute()) {
             appExecutable.setExecutable(true)
         }

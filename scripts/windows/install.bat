@@ -1,10 +1,10 @@
 @echo off
-REM SimpMusic offline installer for Windows.
+REM DplayMusic offline installer for Windows.
 REM Double-click this file. UAC will prompt for admin (needed for cert + sideload).
 REM
 REM Bundle requirement (same folder as this .bat):
-REM   - simpmusic.crt
-REM   - simpmusic-<version>.msix     (any .msix matching simpmusic-*.msix)
+REM   - dplaymusic.crt
+REM   - dplaymusic-<version>.msix     (any .msix matching dplaymusic-*.msix)
 REM
 REM Only x64 MSIX is shipped — Windows 11 ARM64 hosts run it under Prism
 REM emulation. ARM64 native build is blocked upstream by a missing
@@ -22,18 +22,18 @@ if %errorlevel% neq 0 (
 )
 
 echo.
-echo === SimpMusic offline installer ===
+echo === DplayMusic offline installer ===
 echo.
 
 REM --- 2. Install cert to Trusted People (idempotent via certutil) -----------
-if not exist "%~dp0simpmusic.crt" (
-    echo [ERROR] simpmusic.crt not found next to install.bat
+if not exist "%~dp0dplaymusic.crt" (
+    echo [ERROR] dplaymusic.crt not found next to install.bat
     pause
     exit /b 1
 )
 
-echo [1/3] Importing simpmusic.crt to LocalMachine\TrustedPeople ...
-certutil -addstore -f "TrustedPeople" "%~dp0simpmusic.crt"
+echo [1/3] Importing dplaymusic.crt to LocalMachine\TrustedPeople ...
+certutil -addstore -f "TrustedPeople" "%~dp0dplaymusic.crt"
 if %errorlevel% neq 0 (
     echo [ERROR] Certificate import failed.
     pause
@@ -42,10 +42,10 @@ if %errorlevel% neq 0 (
 
 REM --- 3. Find the bundled MSIX ----------------------------------------------
 set "MSIX="
-for %%f in ("%~dp0simpmusic-*.msix") do set "MSIX=%%f"
+for %%f in ("%~dp0dplaymusic-*.msix") do set "MSIX=%%f"
 
 if not defined MSIX (
-    echo [ERROR] No simpmusic-*.msix found in this folder.
+    echo [ERROR] No dplaymusic-*.msix found in this folder.
     pause
     exit /b 1
 )
@@ -57,7 +57,7 @@ REM data) even when the version is identical, so no manual uninstall is needed.
 REM If that still fails (e.g. signing publisher changed), fall back to removing
 REM the old package and doing a clean install.
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-    "try { Add-AppxPackage -Path '%MSIX%' -ForceApplicationShutdown -ForceUpdateFromAnyVersion -ErrorAction Stop; exit 0 } catch { Write-Host 'In-place update failed; removing existing SimpMusic and reinstalling...'; Get-AppxPackage -Name 'Simpmusic' | Remove-AppxPackage -ErrorAction SilentlyContinue; try { Add-AppxPackage -Path '%MSIX%' -ForceApplicationShutdown -ErrorAction Stop; exit 0 } catch { Write-Host $_; exit 1 } }"
+    "try { Add-AppxPackage -Path '%MSIX%' -ForceApplicationShutdown -ForceUpdateFromAnyVersion -ErrorAction Stop; exit 0 } catch { Write-Host 'In-place update failed; removing existing DplayMusic and reinstalling...'; Get-AppxPackage -Name '*playmusic*' | Remove-AppxPackage -ErrorAction SilentlyContinue; try { Add-AppxPackage -Path '%MSIX%' -ForceApplicationShutdown -ErrorAction Stop; exit 0 } catch { Write-Host $_; exit 1 } }"
 
 if %errorlevel% neq 0 (
     echo.
@@ -71,12 +71,13 @@ if %errorlevel% neq 0 (
 
 REM --- 4. Launch app ---------------------------------------------------------
 echo.
-echo [3/3] Launching SimpMusic ...
-start "" "shell:appsFolder\Simpmusic_ejp2bhxmz1qq6!Simpmusic"
+echo [3/3] Launching DplayMusic ...
+powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+    "$p = Get-AppxPackage -Name '*playmusic*' | Select-Object -First 1; if ($p) { $id = (Get-AppxPackageManifest $p).Package.Applications.Application.Id | Select-Object -First 1; Start-Process ('shell:AppsFolder\' + $p.PackageFamilyName + '!' + $id) }"
 
 echo.
-echo SimpMusic installed successfully.
-echo To uninstall: Settings -^> Apps -^> Installed apps -^> SimpMusic -^> Uninstall
+echo DplayMusic installed successfully.
+echo To uninstall: Settings -^> Apps -^> Installed apps -^> DplayMusic -^> Uninstall
 echo.
 pause
 endlocal
